@@ -28,8 +28,16 @@ async def execute_tool(request: ToolRequest):
         tool = request.tool_name
         args = request.arguments
 
-        if tool == "pg_create_record" or tool == "insert_in_postgres":
-            result = await mcp_server._create_record(args["table"], args["data"])
+        if request.tool_name == "pg_create_record" or request.tool_name == "insert_in_postgres":
+            data = request.arguments["data"]
+
+            # Convert calculated_time string to datetime
+            if "calculated_time" in data and isinstance(data["calculated_time"], str):
+                from datetime import datetime
+                data["calculated_time"] = datetime.fromisoformat(data["calculated_time"])
+
+            result = await mcp_server._create_record(request.arguments["table"], data)
+
 
         elif tool == "pg_read_records" or tool == "get_from_postgres":
             result = await mcp_server._read_records(args["table"], args.get("conditions"), args.get("limit"))
@@ -59,4 +67,4 @@ async def execute_tool(request: ToolRequest):
 
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=0)
