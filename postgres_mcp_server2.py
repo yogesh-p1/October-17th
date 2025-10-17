@@ -156,7 +156,14 @@ class PostgresMCPServer:
                     data = arguments.get("data")
                     if not data:
                         return [TextContent(type="text", text=json.dumps({"error": "Missing 'data' argument"}))]
+
+                    # Convert calculated_time string to datetime
+                    if "calculated_time" in data and isinstance(data["calculated_time"], str):
+                        from datetime import datetime
+                        data["calculated_time"] = datetime.fromisoformat(data["calculated_time"])
+
                     result = await self._create_record(arguments["table"], data)
+
                 elif name == "get_from_postgres":
                     result = await self._read_records(
                         arguments["table"],
