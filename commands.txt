@@ -1,0 +1,10 @@
+ .\venv312\Scripts\activate
+
+body:
+ {
+  "tool_name": "pg_read_records",
+  "arguments": {
+    "table": "lighthouseV2",
+    "limit": 10
+  }
+}
